@@ -30,8 +30,11 @@ public class GraphicInterface extends Application {
 
         Map<String, ArrayList<String>> arrTasks = new HashMap<>();
 
+        open.setTranslateX(100);
         open.setTranslateY(40);
-        open.setTranslateX(75);
+
+        start.setTranslateX(50);
+        start.setTranslateY(40);
 
         open.setText("Open");
         open.setOnAction(event -> {
@@ -55,8 +58,10 @@ public class GraphicInterface extends Application {
 //                root.getChildren().add(textField);
             number.add(new TextField());
             number.get(lenght-1).setTranslateX(0);
-            number.get(lenght-1).setTranslateY(30+(25*lenght-1));
+            number.get(lenght-1).setTranslateY(number.get(lenght-1).getTranslateY()+(25*lenght-1));
             root.getChildren().addAll(number.get(lenght-1));
+            start.setTranslateY(start.getTranslateY()+30);
+            open.setTranslateY(open.getTranslateY()+30);
 
         });
 
