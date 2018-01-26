@@ -1,6 +1,7 @@
 package ru.gva.timeAndTask;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -15,39 +16,44 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class GraphicInterface extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         GridPane root = new GridPane();
+
         Button open = new Button();
         Button start = new Button();
 
         ArrayList<TextField> number = new ArrayList<>();
+        ArrayList<Label> nameTextField = new ArrayList<>();
 
         Map<String, ArrayList<String>> arrTasks = new HashMap<>();
 
-        open.setTranslateX(100);
+        open.setTranslateX(150);
         open.setTranslateY(40);
 
-        start.setTranslateX(50);
+        start.setTranslateX(100);
         start.setTranslateY(40);
 
         open.setText("Open");
-        open.setOnAction(event -> {
-            int lenght=1;
-//            add(number1);
+        open.setOnAction((ActionEvent event) -> {
+            int lenght = 1;
+            String name = "";
+
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("add file");
+
             File file = fileChooser.showOpenDialog(primaryStage);
-//            System.out.println(file.getPath());
+
             try {
                 ArrayList<String> value = new ArrayList<>();
+
                 value.addAll(Files.readAllLines(Paths.get(file.getPath())));
-                arrTasks.put(keyGen(file.getPath()), value);
+                name = MethodsForTask.keyGen(file.getPath(),arrTasks.keySet().toArray(new String[0]));
+                arrTasks.put(name, value);
+
                 lenght = arrTasks.keySet().toArray(new String[0]).length;
 
             } catch (IOException e) {
@@ -55,33 +61,32 @@ public class GraphicInterface extends Application {
 
             }
 
-//                root.getChildren().add(textField);
             number.add(new TextField());
-            number.get(lenght-1).setTranslateX(0);
-            number.get(lenght-1).setTranslateY(number.get(lenght-1).getTranslateY()+(25*lenght-1));
-            root.getChildren().addAll(number.get(lenght-1));
-            start.setTranslateY(start.getTranslateY()+30);
-            open.setTranslateY(open.getTranslateY()+30);
+            nameTextField.add(new Label(name));
+
+            number.get(lenght - 1).setTranslateX(60);
+            number.get(lenght - 1).setTranslateY(number.get(lenght - 1).getTranslateY() + (25 * lenght - 1));
+
+            nameTextField.get(lenght-1).setTranslateX(10);
+            nameTextField.get(lenght-1).setTranslateY(number.get(lenght-1).getTranslateY());
+
+            root.getChildren().addAll(number.get(lenght - 1),nameTextField.get(lenght-1));
+
+            start.setTranslateY(start.getTranslateY() + 30);
+
+            open.setTranslateY(open.getTranslateY() + 30);
 
         });
 
         start.setText("Start");
-//        button1.setOnAction(event -> {
-//            viewMap(arrTasks);
 
-//        });
-        start.setOnAction(event -> {
-//            System.out.println(number.size());
+        start.setOnAction((ActionEvent event) -> {
+            int[] countsOfTask = MethodsForTask.returnTextField(number);
+            Map<String,ArrayList<String>> arrTasksSort = MethodsForTask.sort(countsOfTask,arrTasks);
+
             TextArea secondLabel = new TextArea();
-            secondLabel.setText(viewMap(arrTasks));
+            secondLabel.setText(MethodsForTask.viewMap(arrTasksSort));
 
-            secondLabel.setText(viewMap(arrTasks));
-
-
-//            System.out.println(number.get(0).getCharacters());
-//            String n1 = String.valueOf(number.get(0).getCharacters());
-//            int p = Integer.valueOf(n1);
-//            System.out.println(p);
 
             StackPane secondaryLayout = new StackPane();
             secondaryLayout.getChildren().addAll(secondLabel);
@@ -95,58 +100,11 @@ public class GraphicInterface extends Application {
             newWindow.setScene(secondScene);
 
             newWindow.show();
+
         });
-//        addTextField(root,number);
         root.getChildren().addAll(open, start);
-        primaryStage.setScene(new Scene(root, 200, 200));
+        primaryStage.setScene(new Scene(root, 300, 300));
         primaryStage.show();
     }
 
-//    private void add(int number1) {
-//        number1++;
-//        System.out.println(number1);
-//    }
-//
-//    private void addTextField(GridPane root, ArrayList<TextField> number) {
-//        for (int i = 0; i < number.size(); i++) {
-//            root.getChildren().addAll(number.get(i));
-//            number.get(i).setTranslateX(0);
-//            number.get(i).setTranslateY(90-(10*i));
-//
-//        }
-//    }
-
-//    private void scroll(ScrollBar scrollPane, TextArea secondLabel) {
-//
-//        scrollPane.valueProperty().addListener(event -> {
-//           secondLabel.setTranslateY(0-scrollPane.getValue());
-//
-//        });
-//    }
-
-    private String viewMap(Map<String, ArrayList<String>> arrTasks) {
-        StringBuilder result = new StringBuilder();
-        String[] keyName = arrTasks.keySet().toArray(new String[0]);
-        for (String aKeyName : keyName) {
-            ArrayList<String> value = arrTasks.get(aKeyName);
-            for (String aValue : value) {
-                result.append(aValue).append("\n");
-            }
-        }
-        return result.toString();
-    }
-
-    private String keyGen(String path) {
-        Pattern nameFileAndExp = Pattern.compile("\\w+\\..+$");
-        Matcher mNameFileAndExp = nameFileAndExp.matcher(path);
-
-        if (mNameFileAndExp.find()) {
-            return mNameFileAndExp.group();
-        }
-        return "key";
-    }
-
-    public static void main(String[] args) {
-        launch(args);
-    }
 }
