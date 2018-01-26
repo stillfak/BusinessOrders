@@ -64,6 +64,8 @@ public class GraphicInterface extends Application {
             number.add(new TextField());
             nameTextField.add(new Label(name));
 
+            number.get(lenght-1).setText("1");
+
             number.get(lenght - 1).setTranslateX(60);
             number.get(lenght - 1).setTranslateY(number.get(lenght - 1).getTranslateY() + (25 * lenght - 1));
 
